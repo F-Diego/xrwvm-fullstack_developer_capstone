@@ -4,7 +4,6 @@ import "./Dealers.css";
 import "../assets/style.css";
 import Header from '../Header/Header';
 
-
 const PostReview = () => {
   const [dealer, setDealer] = useState({});
   const [review, setReview] = useState("");
@@ -33,8 +32,12 @@ const PostReview = () => {
     }
 
     let model_split = model.split(" ");
-    let make_chosen = model_split[0];
-    let model_chosen = model_split[1];
+    let [make_chosen, model_chosen] = model.split(" ");
+    if (!make_chosen || !model_chosen) {
+        alert("Please select a valid car make and model");
+        return;
+    }
+
 
     let jsoninput = JSON.stringify({
       "name": name,
@@ -69,12 +72,13 @@ const PostReview = () => {
     const retobj = await res.json();
     
     if(retobj.status === 200) {
-      let dealerobjs = Array.from(retobj.dealer)
-      if(dealerobjs.length > 0)
-        setDealer(dealerobjs[0])
+      //let dealerobjs = Array.from(retobj.dealer)
+      //if(dealerobjs.length > 0)
+        //setDealer(dealerobjs[0])
+        setDealer(retobj.dealer);
     }
   }
-
+/*
   const get_cars = async ()=>{
     const res = await fetch(carmodels_url, {
       method: "GET"
@@ -83,34 +87,53 @@ const PostReview = () => {
     
     let carmodelsarr = Array.from(retobj.CarModels)
     setCarmodels(carmodelsarr)
-  }
+  }*/
   useEffect(() => {
     get_dealer();
     get_cars();
   },[]);
+
+  const get_cars = async () => {
+    try {
+      const res = await fetch(carmodels_url, { method: "GET" });
+      const retobj = await res.json();
+      console.log("CarModels response:", retobj); // 👈 log para confirmar estructura
+  
+      if (retobj.CarModels) {
+        setCarmodels(retobj.CarModels);
+      }
+    } catch (err) {
+      console.error("Error fetching car models:", err);
+    }
+  };
+  
 
 
   return (
     <div>
       <Header/>
       <div  style={{margin:"5%"}}>
-      <h1 style={{color:"darkblue"}}>{dealer.full_name}</h1>
+      <h1 style={{color:"darkblue"}}>{dealer?.full_name || "Cargando dealer..."}</h1>
       <textarea id='review' cols='50' rows='7' onChange={(e) => setReview(e.target.value)}></textarea>
       <div className='input_field'>
       Purchase Date <input type="date" onChange={(e) => setDate(e.target.value)}/>
       </div>
       <div className='input_field'>
       Car Make 
-      <select name="cars" id="cars" onChange={(e) => setModel(e.target.value)}>
-      <option value="" selected disabled hidden>Choose Car Make and Model</option>
-      {carmodels.map(carmodel => (
-          <option value={carmodel.CarMake+" "+carmodel.CarModel}>{carmodel.CarMake} {carmodel.CarModel}</option>
-      ))}
-      </select>        
+      <select name="cars" id="cars" value={model || ""} onChange={(e) => setModel(e.target.value)}>
+        <option value="" disabled hidden>Choose Car Make and Model</option>
+            {carmodels.map(carmodel => (
+        <option key={carmodel.CarMake + carmodel.CarModel} value={carmodel.CarMake + " " + carmodel.CarModel}>
+            {carmodel.CarMake} {carmodel.CarModel}
+        </option>
+        ))}
+    </select>
+        
       </div >
 
       <div className='input_field'>
-      Car Year <input type="int" onChange={(e) => setYear(e.target.value)} max={2023} min={2015}/>
+      Car Year <input type="number" onChange={(e) => setYear(e.target.value)} max={2023} min={2015}/>
+
       </div>
 
       <div>
