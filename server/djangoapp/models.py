@@ -4,6 +4,7 @@ from django.db import models
 # from django.utils.timezone import now
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+
 # Create your models here.
 # <HINT> Create a Car Make model `class CarMake(models.Model)`:
 # - Name
@@ -18,6 +19,7 @@ class CarMake(models.Model):
     def __str__(self):
         return self.name  # Return the name as the string representation
 
+
 # <HINT> Create a Car Model model `class CarModel(models.Model):`:
 # - Many-To-One relationship to Car Make model (One Car Make has many
 # Car Models, using ForeignKey field)
@@ -27,7 +29,6 @@ class CarMake(models.Model):
 # - Year (IntegerField) with min value 2015 and max value 2023
 # - Any other fields you would like to include in car model
 # - __str__ method to print a car make object
-
 class CarModel(models.Model):
     # Relación muchos-a-uno con CarMake
     car_make = models.ForeignKey('CarMake', on_delete=models.CASCADE)
@@ -47,8 +48,8 @@ class CarModel(models.Model):
         ]
     )
 
-    # opcional, para enlazar con concesionarios externos# opcional, 
-    dealer_id = models.IntegerField(blank=True, null=True)  
+    # opcional, para enlazar con concesionarios externos
+    dealer_id = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.car_make.name} {self.name} ({self.year})"

@@ -1,6 +1,6 @@
 # Uncomment the required imports before adding the code
 
-#from django.shortcuts import render
+# from django.shortcuts import render
 # from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 # from django.shortcuts import get_object_or_404, render, redirect
@@ -32,7 +32,7 @@ def get_cars(request):
     for car_model in car_models:
         cars.append(
             {
-                "CarModel": car_model.name, 
+                "CarModel": car_model.name,
                 "CarMake": car_model.car_make.name
             }
         )
@@ -55,6 +55,7 @@ def login_user(request):
         data = {"userName": username, "status": "Authenticated"}
     return JsonResponse(data)
 
+
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):
     logout(request)  # Terminate user session
@@ -76,21 +77,21 @@ def registration(request):
     username_exist = False
     # email_exist = False
     try:
-    # Check if user already exists
+        # Check if user already exists
         User.objects.get(username=username)
         username_exist = True
     except User.DoesNotExist:
-    # If not, simply log this is a new user
+        # If not, simply log this is a new user
         logger.debug("%s is new user", username)
 
     # If it is a new user
     if not username_exist:
         # Create user in auth_user table
         user = User.objects.create_user(
-            username=username, 
-            first_name=first_name, 
+            username=username,
+            first_name=first_name,
             last_name=last_name,
-            password=password, 
+            password=password,
             email=email
         )
         # Login the user and redirect to list page
@@ -136,7 +137,7 @@ def get_dealer_reviews(request, dealer_id):
                 review_detail['sentiment'] = "neutral"
         return JsonResponse({"status": 200, "reviews": reviews})
     else:
-        return JsonResponse({"status": 400,"message": "Bad Request"})
+        return JsonResponse({"status": 400, "message": "Bad Request"})
 
 
 # Create a `get_dealer_details` view to render the dealer details
@@ -162,6 +163,11 @@ def add_review(request):
             return JsonResponse({"status": 200})
         except Exception as e:
             logger.error("Error posting review: %s", e)
-            return JsonResponse({"status": 401, "message": "Error in posting review"})
+            return JsonResponse(
+                {
+                    "status": 401,
+                    "message":"Error in posting review"
+                }
+            )
     else:
         return JsonResponse({"status": 403, "message": "Unauthorized"})
