@@ -107,7 +107,7 @@ def registration(request):
 # a list of dealerships
 # def get_dealerships(request):
 # ...
-# Update the `get_dealerships` render list of dealerships all by default, 
+# Update the `get_dealerships` render list of dealerships all by default,
 # particular state if state is passed
 def get_dealerships(request, state="All"):
     if (state == "All"):
@@ -166,7 +166,7 @@ def add_review(request):
             return JsonResponse(
                 {
                     "status": 401,
-                    "message":"Error in posting review"
+                    "message": "Error in posting review"
                 }
             )
     else:
